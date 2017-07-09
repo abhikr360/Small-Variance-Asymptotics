@@ -1,0 +1,176 @@
+\documentclass[hyperref={pdfpagelabels=false}]{beamer}
+\usepackage{lmodern}
+\usepackage{url}
+\usetheme{CambridgeUS}
+
+\title{Title of the Talk}  
+%\author{Sascha Frank}
+%Dr. Bhavana Kanukurthi
+\author[Abhishek Kumar]{Abhishek Kumar\\{\small Supervised by: Dr. Bhavana Kanukurthi}}
+\date{\today} 
+\begin{document}
+\logo{\includegraphics[scale=0.14]{iit} \ \ \includegraphics[scale=0.14]{iisc}}
+\begin{frame}
+\titlepage
+\end{frame} 
+
+
+\begin{frame}
+\frametitle{Table of contents}
+\tableofcontents
+\end{frame} 
+
+
+\section{Introduction} 
+\begin{frame}
+\frametitle{Introduction} 
+\begin{itemize}
+\item We will talk about a protocol for oblivious evaluation of psuedorandom function(OPRF). \pause
+\item The above mentioned protocol is efficient for evaluating a large batch of OPRF instances. \pause
+\item We will consider semi-honest setting.\pause
+\item The above protocol is due to \cite{KKRT} called Batched Related Key OPRF(BaRK-OPRF).\pause
+\item PSI uses Oblivious Transfers' Extension(OT-Extension) from \cite{KK} as building blocks.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+\begin{itemize}
+\item This work significantly improves the state-of-the-art Private Set Intersecction(PSI) protocol of \cite{PSSZ}.\pause
+\item Among the problems of secure computation, PSI is most strongly motivated by practice. \pause
+\item It is used for measuring Ad Conversion rate, Security incident information sharing, private contact discovery.\pause
+\item The \cite{IKNP} OT extension is one of the gems in the field of secure computation and used in implementations of Yao and GMW protocols.
+\end{itemize}
+ 
+\end{frame}
+
+\begin{frame}
+\frametitle{Related Work}
+\begin{itemize}
+\item OPRFs were introduced by \cite{FIPR} but they use expensive public key operations. Also they use number of OTs proportional to bit length of PRF input. \pause
+\item Just like standard OPRF, BaRK-OPRF efficiently implies keyword search functionality of \cite{FIPR}. \pause
+\item The protocol of \cite{CNS} constructs an OPRF from unique blind signature schemes.
+\end{itemize}
+\end{frame}
+
+
+\section{Section no. 2} 
+\subsection{Lists I}
+\begin{frame}
+\frametitle{unnumbered lists}
+\begin{itemize}
+\item Introduction to  \LaTeX{}  
+\item Course 2 
+\item Termpapers and presentations with \LaTeX{}  
+\item Beamer class
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{lists with single pauses}
+\begin{itemize}
+\item Introduction to  \LaTeX{}  \pause 
+\item Course 2 \pause 
+\item Termpapers and presentations with \LaTeX{}  \pause 
+\item Beamer class
+\end{itemize} 
+\end{frame}
+
+\begin{frame}\frametitle{lists with pause}
+\begin{itemize}[<+->]
+\item Introduction to  \LaTeX{}  
+\item Course 2
+\item Termpapers and presentations with \LaTeX{}  
+\item Beamer class
+\end{itemize} 
+\end{frame}
+
+
+
+\subsection{Lists II}
+\begin{frame}\frametitle{numbered lists}
+\begin{enumerate}
+\item Introduction to  \LaTeX{}   
+\item Course 2 
+\item Termpapers and presentations with \LaTeX{}  
+\item Beamer class
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{numbered lists with single pauses}
+\begin{enumerate}
+\item Introduction to  \LaTeX{}  \pause 
+\item Course 2 \pause 
+\item Termpapers and presentations with \LaTeX{}  \pause 
+\item Beamer class
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{numbered lists with pause}
+\begin{enumerate}[<+->]
+\item Introduction to  \LaTeX{}  
+\item Course 2
+\item Termpapers and presentations with \LaTeX{}  
+\item Beamer class
+\end{enumerate}
+\end{frame}
+
+
+
+
+\section{Section no.3} 
+\subsection{Tables}
+\begin{frame}
+\frametitle{Tables}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Date} & \textbf{Instructor} & \textbf{Title} \\
+\hline
+WS 04/05 & Sascha Frank & First steps with  \LaTeX  \\
+\hline
+SS 05 & Sascha Frank & \LaTeX \ Course serial \\
+\hline
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Tables with pause}
+\begin{tabular}{c c c}
+A & B & C \\ 
+\pause 
+1 & 2 & 3 \\  
+\pause 
+A & B & C \\ 
+\end{tabular} 
+\end{frame}
+
+
+\section{Section no. 4}
+\subsection{blocs}
+\begin{frame}
+\frametitle{blocs}
+
+\begin{block}{title of the bloc}
+bloc text
+\end{block}
+
+\begin{exampleblock}{title of the bloc}
+bloc text
+\end{exampleblock}
+
+
+\begin{alertblock}{title of the bloc}
+bloc text
+\end{alertblock}
+\end{frame}
+
+\section{References}
+\bibliography{talk}
+\bibliographystyle{alpha}
+
+
+
+\end{document}
+
