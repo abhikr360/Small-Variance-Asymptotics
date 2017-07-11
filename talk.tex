@@ -2,6 +2,13 @@
 \usepackage{lmodern}
 \usepackage{url}
 \usetheme{CambridgeUS}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{relsize}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
 
 \title{Title of the Talk}  
 %\author{Sascha Frank}
@@ -54,17 +61,108 @@
 \end{frame}
 
 
-\section{Section no. 2} 
-\subsection{Lists I}
+\section{Preliminaries}
+\subsection{definitions}
 \begin{frame}
-\frametitle{unnumbered lists}
-\begin{itemize}
-\item Introduction to  \LaTeX{}  
-\item Course 2 
-\item Termpapers and presentations with \LaTeX{}  
-\item Beamer class
-\end{itemize} 
+\frametitle{Correlation Robustness}
+
+\begin{definition}[1]
+\textit{Let H be a hash function with input length n. Then H is a d-\textbf{Hamming correlation robust} if for any strings $z_1....z_m \in \{0,1\}^*$ and $a_1,....a_m,b_1,....b_m \in \{0,1\}^*$ with $\|b_i\|_H \geq d $, the following distribution, induced by random sampling of $s \longleftarrow \{0,1\}^n$, is psuedo-random :}
+\begin{equation*}
+H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])
+\end{equation*}
+%$H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])$`
+``." denotes bitwise-AND
+\end{definition}
 \end{frame}
+
+\begin{frame}
+\frametitle{Psuedo-Random Codes}
+\begin{definition}[2]
+\textit{Let $\mathcal{C}$ be a family of functions. We say that $\mathcal{C}$ is a ($d,\epsilon$) $\mathbf{psuedorandom}$ $\mathbf{code(PRC)}$ if for all strings $x \neq x^\prime$,}
+\begin{equation*}
+\Pr_{C\leftarrow \mathcal{C}} \left[ \|C(x) \oplus C(x^\prime)\|_H < d \right] \leq 2^{-\epsilon}
+\end{equation*}
+\end{definition}\pause
+
+\begin{lemma}[1]
+\textit{Suppose $G : \{0,1\}^\kappa \times \{0,1\}^* \rightarrow \{0,1\}^n$ is a psuedorandom function. Define $\mathcal{C} = \{G(s,\cdot) \  | \ s \in \{0,1\}^\kappa\}$. Then $\mathcal{C}$ is a $(d,\epsilon)$-psuedorandom code where : }
+
+\begin{equation*}
+2^{-\epsilon} = 2^{-n}\sum_{i=0}^{d-1} {n \choose i} + \vartheta(\kappa)
+\end{equation*}
+\end{lemma}
+\end{frame}
+
+\begin{frame}
+\frametitle{High Level Idea}
+\begin{itemize}
+\item We see 1-out-of-$\infty$ OT extension as OPRF. The intuition begind this is the fact that Sender has ability to  evaluate the function at any point but remains oblivious to Receiver's choice. Also Receiver can't evaluate function at any point as it doesn't have access to key.\pause
+
+\item However in the construction as we shall see, more information is leaked than required. Hence we will meet the definition of \textsf{relaxed OPRF} as defined in \cite{FIPR}.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{relaxed PRF}
+\begin{definition}[3]
+\textit{F is said to be a \textsf{relaxed PRF} if there is another $\widetilde{F}$, such that F(key,r) can be efficiently computed given just $\widetilde{F}$(key, r).}
+\end{definition}\pause
+
+\begin{definition}[4]
+\textit{Let F be a relaxed PRF with output length v, for which we can write the $key = (k^*,k)$. Then F has $\mathbf{m-related-key-PRF (m-RK-PRF) security}$ if the advantage of any PPT adversary in the following game is negligible :
+}
+\end{definition}
+\end{frame}
+\subsection{Security game}
+\begin{frame}
+\frametitle{Security Game}
+\begin{enumerate}
+\item The adversary chooses a large no. of strings $x_1,.....x_n$ which it will query to $\widetilde{F}$.\pause
+\item Then it selects $m$ pairs $(p_1,y_1),.....(p_m,y_m)$. where $p_i \neq x_{j_i}$.\pause
+\item Challenger chooses keys $k^*, k_1, k_2, ....k_n$ which can be used as key to $F$.\pause
+
+\end{enumerate}
+
+\begin{remark}
+Pair $(K^*,K_i)$ will be used as $key$ to $F$ for input $x_i$ for $i \in \left[n\right] $.
+We assume that $p_1,...p_m \in \left[n\right]$. This is because $p_i's$ are basically meant to determine the key $(k^*,k_{p_i})$ that will be used when  input to $F$ is $y_i's$ for $y \in \left[m\right]$.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{remark}
+$y_i \neq x_{p_i}$ for $i \in \left[m\right]$. If this is not true then adversary will win trivially, as it means that adversary is choosing is a string which has been queried before with has been queried before with same key hence it can easily distinguish from random.
+\end{remark}
+\end{frame}
+\begin{frame}
+\frametitle{Game continued...}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Challenger tosses a coin $b \leftarrow \{0,1\}$.\pause
+\begin{enumerate}[(a)]
+\item If $b=0$, challenger outputs $\{\widetilde{F}((k^*,k_i),x_i)\}_i$ for $i \in \left[n\right]$ and $\{F((k^*,k_{p_l}),y_l)\}_l$ for $l \in \left[m\right]$.\pause
+\item If $b=1$, challenger outputs $\{\widetilde{F}((k^*,k_i),x_i)\}_i$ for $i \in \left[n\right]$ and $\{z_l\}_l$ for $l \in \left[m\right]$ where $z_l \in_{randomly} \{0,1\}^v$.\pause
+\end{enumerate}
+\item Adversary outputs a bit $b^\prime$. Adversary wins if $b^\prime = b$\pause
+\end{enumerate}
+\textit{The PRF is secure if $\Pr\left[b=b^\prime\right] \leq \frac{1}{2} + negligible$} \pause
+\begin{remark}
+Intuitively the $PRF$ is instantiated with $n$ related keys(sharing $k^*$ value ). The adversary learns the relaxed output on one chosen input for each key. Then any $m$ additional $PRF$ outputs are indistinguishable from random.
+\end{remark}
+\end{frame}
+
+\begin{lemma}[2]
+Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correlation\ robust$ hash function. Let us define following relaxed PRF for $C \in_{randomly} \mathcal{C}:$
+\begin{align*}
+\mathlarger{\mathlarger{F(}} \mathlarger{(}  (C,s),(q_j,j)\mathlarger{)}, r \mathlarger{\mathlarger{)}} = \mathlarger{H(} j||q_j \oplus [C(r)\cdot s] \mathlarger{)}
+\\
+\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  (C,s),(q_j,j)\mathlarger{)}, r \mathlarger{\mathlarger{)}} = \mathlarger{(} j, C, q_j \oplus [C(r)\cdot s] \mathlarger{)}
+\end{align*}
+\end{lemma}
 
 \begin{frame}\frametitle{lists with single pauses}
 \begin{itemize}
@@ -166,6 +264,22 @@ bloc text
 \end{alertblock}
 \end{frame}
 
+\section{Appendix}
+\begin{frame}
+\frametitle{Proof of Lemma 1}
+\begin{proof}
+\textit{If we define $\mathcal{C}$ from random functions G instead of psuedorandom we get
+\begin{equation*}
+\Pr_{C\leftarrow \mathcal{C}} \left[ \|C(x) \oplus C(x^\prime)\|_H < d \right] = 2^{-n}\sum_{i=0}^{d-1} {n \choose i}
+\end{equation*}
+In the case when G is psuedorandom function this probability must be equal to
+\begin{equation*}
+2^{-n}\sum_{i=0}^{d-1} {n \choose i} + \vartheta(\kappa)
+\end{equation*}
+where $\vartheta(\kappa)$ is negligible
+else we can build a distinguisher $\mathcal{D}$ that distinguishes output of PRF from Random function by calculating hamming weights of inputs.}
+\end{proof}
+\end{frame}
 \section{References}
 \bibliography{talk}
 \bibliographystyle{alpha}
