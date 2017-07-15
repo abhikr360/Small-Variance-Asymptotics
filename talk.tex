@@ -6,13 +6,14 @@
 \usepackage{amsthm}
 \usepackage{enumerate}
 \usepackage{relsize}
+\usepackage{wasysym}
+\usepackage{amssymb}
 
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-\title{Title of the Talk}  
-%\author{Sascha Frank}
-%Dr. Bhavana Kanukurthi
+
+\title{BaRK OPRF and Fuzzy PSI}
 \author[Abhishek Kumar]{Abhishek Kumar\\{\small Supervised by: Dr. Bhavana Kanukurthi}}
 \date{\today} 
 \begin{document}
@@ -32,8 +33,8 @@
 \begin{frame}
 \frametitle{Introduction} 
 \begin{itemize}
-\item We will talk about a protocol for oblivious evaluation of psuedorandom function(OPRF). \pause
-\item The above mentioned protocol is efficient for evaluating a large batch of OPRF instances. \pause
+\item In this talk we will talk about a protocol for oblivious evaluation of psuedorandom function(OPRF). \pause
+\item This mentioned protocol is efficient for evaluating a large batch of OPRF instances. \pause
 \item We will consider semi-honest setting.\pause
 \item The above protocol is due to \cite{KKRT} called Batched Related Key OPRF(BaRK-OPRF).\pause
 \item PSI uses Oblivious Transfers' Extension(OT-Extension) from \cite{KK} as building blocks.
@@ -62,14 +63,33 @@
 
 
 \section{Preliminaries}
-\subsection{definitions}
+\subsection{Definitions}
+
+\begin{frame}
+\frametitle{Notations}
+\begin{itemize}
+\item We denote vectors in bold for eg. $\mathbf{a}$.
+\item $OT_l^m$ means $m$ instances of OTs of $l$-bit strings.
+\item We denote Matrices in capital say $M$.
+\item For matrix $M$ 
+	\begin{itemize}
+	\item $M_i$ means $i^th$ row of M
+	\item $M^j$ means $j^th$ coloumn of M.
+	\end{itemize}
+\item For vector $\mathbf{a}$ and bit $b$, $\mathbf{a} \cdot b$ means $\mathbf{a}$ if $b=1$ else $\mathbf{0}$.
+\item For vectors  $\mathbf{a}$ and bit $\mathbf{b}$, $\mathbf{a} \cdot \mathbf{b}$ means bitwise AND.
+\end{itemize}
+
+\end{frame}
+
+
 \begin{frame}
 \frametitle{Correlation Robustness}
 
 \begin{definition}[1]
 \textit{Let H be a hash function with input length n. Then H is a d-\textbf{Hamming correlation robust} if for any strings $z_1....z_m \in \{0,1\}^*$ and $a_1,....a_m,b_1,....b_m \in \{0,1\}^*$ with $\|b_i\|_H \geq d $, the following distribution, induced by random sampling of $s \longleftarrow \{0,1\}^n$, is psuedo-random :}
 \begin{equation*}
-H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])
+H(z_1||a_1 \oplus [b_1 \cdot s]),.....,H(z_m||a_m \oplus [b_m \cdot s])
 \end{equation*}
 %$H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])$`
 ``." denotes bitwise-AND
@@ -115,7 +135,7 @@ H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])
 }
 \end{definition}
 \end{frame}
-\subsection{Security game}
+\subsection{Security game for relaxed-OPRF}
 \begin{frame}
 \frametitle{Security Game}
 \begin{enumerate}
@@ -155,6 +175,7 @@ Intuitively the $PRF$ is instantiated with $n$ related keys(sharing $k^*$ value 
 \end{remark}
 \end{frame}
 
+\section{Result}
 \begin{lemma}[2]
 Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correlation\ robust$ hash function. Let us define following relaxed PRF for $C \in_{randomly} \mathcal{C}:$
 \begin{align*}
@@ -162,107 +183,82 @@ Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correl
 \\
 \mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  (C,s),(q_j,j)\mathlarger{)}, r \mathlarger{\mathlarger{)}} = \mathlarger{(} j, C, q_j \oplus [C(r)\cdot s] \mathlarger{)}
 \end{align*}
+Then $F$ has $\mathbf{m-RK-PRF}$ security .
 \end{lemma}
+\subsection{Protocol}
 
-\begin{frame}\frametitle{lists with single pauses}
+\begin{frame}
+\frametitle{Ideal Functionality we want to achieve :}
 \begin{itemize}
-\item Introduction to  \LaTeX{}  \pause 
-\item Course 2 \pause 
-\item Termpapers and presentations with \LaTeX{}  \pause 
-\item Beamer class
+\item Thre are two parties, psuedorandom function $F$ and corresponding $\widetilde{F}$ a number $m$ of instances.\pause
+\item On input ($r_1,r_2,......r_m$) from receiver :
+	\begin{itemize}
+	\item Choose random components for seeds to $PRF$ : $k^*, k_1, k_2, ......k_m$ and give it to sender.\pause
+	\item Give $\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_1, \mathlarger{)}, r_1 \mathlarger{\mathlarger{)}},.....\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_m \mathlarger{)}, r_m \mathlarger{\mathlarger{)}}$ to receiver.\pause
+\end{itemize}	 
 \end{itemize} 
 \end{frame}
 
-\begin{frame}\frametitle{lists with pause}
-\begin{itemize}[<+->]
-\item Introduction to  \LaTeX{}  
-\item Course 2
-\item Termpapers and presentations with \LaTeX{}  
-\item Beamer class
-\end{itemize} 
-\end{frame}
+\subsection{BaRK OPRF Protocol}
 
-
-
-\subsection{Lists II}
-\begin{frame}\frametitle{numbered lists}
+\begin{frame}
+\frametitle{BaRK OPRF Protocol}
+\textbf{Input of R :} m selection strings $\mathbf{r} = (\mathbf{r}_1,.....\mathbf{r}_m), r_i \in \{0,1\}^*, i \in [m]$.\par \pause
+\textbf{Parameters :}
+\begin{itemize}
+\item A ($\kappa ,\epsilon$)-PRC family $\mathcal{C}$ with output length $k=g(\kappa)$.\pause
+\item A $\kappa-$Hamming Correlation Robust $H:[m] \times \{0,1\}^k \rightarrow \{0,1\}^v$ \pause
+\item An Ideal $OT_m^k$ primitive.\pause
+\end{itemize}
+\textbf{Protocol :}\pause
 \begin{enumerate}
-\item Introduction to  \LaTeX{}   
-\item Course 2 
-\item Termpapers and presentations with \LaTeX{}  
-\item Beamer class
+\item S chooses a random $C \leftarrow \mathcal{C}$ sends to R.\pause
+\item S chooses $\mathbf{s} \leftarrow \{0,1\}^k$ at random. Let $s_i$ denote $i^th$ bit of $\mathbf{s}$.\pause
+\item R forms $m \times k$ matrix $T_0, T_1$ in following way :
 \end{enumerate}
+
 \end{frame}
 
 \begin{frame}
-\frametitle{numbered lists with single pauses}
+\frametitle{BaRK OPRF Protocol}
 \begin{enumerate}
-\item Introduction to  \LaTeX{}  \pause 
-\item Course 2 \pause 
-\item Termpapers and presentations with \LaTeX{}  \pause 
-\item Beamer class
+\setcounter{enumi}{3}
+\item[] \begin{itemize}
+\item For $j \in [m]$, choose $\mathbf{T}_{0,j} \leftarrow \{0,1\}^k$ randomly.\pause
+\item Set $\mathbf{T}_{1,j} = \mathbf{T}_{0,j} \oplus C(\mathbf{r}_j)$\pause
+\end{itemize}
+\item S and R interact with $OT_m^k$ in the following way :\pause
+\begin{itemize}
+\item S acts as receiver with input $\{s_i\}, i \in [k]$\pause
+\item R acts as sender with input $\{\mathbf{T}_0^i,\mathbf{T}_1^i\}, i \in [k]$\pause
+\item From the output S receives S forms $m\times k$ matrix $Q$ such that 
+\begin{align*}
+\mathbf{Q}^i &= \mathbf{T}_{s_i}^i, \ for\  i \in [k] \\
+\mathbf{Q}_j &= \mathbf{T}_{0,j} \oplus (C(\mathbf{r}_j) \cdot \mathbf{s}) \ for \ j \in [m]
+\end{align*}
+\end{itemize}\pause
+\item For $for \ j \in [m]$ S outputs $PRF$ seed $((C,\mathbf{s}),(j,\mathbf{Q}_j))$.\pause
+\item For $for \ j \in [m]$ R outputs relaxed-$PRF$ output $(C,j,\mathbf{T}_{0,j})$.\pause
 \end{enumerate}
-\end{frame}
-
-\begin{frame}
-\frametitle{numbered lists with pause}
-\begin{enumerate}[<+->]
-\item Introduction to  \LaTeX{}  
-\item Course 2
-\item Termpapers and presentations with \LaTeX{}  
-\item Beamer class
-\end{enumerate}
-\end{frame}
-
-
-
-
-\section{Section no.3} 
-\subsection{Tables}
-\begin{frame}
-\frametitle{Tables}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Date} & \textbf{Instructor} & \textbf{Title} \\
-\hline
-WS 04/05 & Sascha Frank & First steps with  \LaTeX  \\
-\hline
-SS 05 & Sascha Frank & \LaTeX \ Course serial \\
-\hline
-\end{tabular}
+From relaxed-$PRF$'s output, R can calculate PRF's output.
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Tables with pause}
-\begin{tabular}{c c c}
-A & B & C \\ 
-\pause 
-1 & 2 & 3 \\  
-\pause 
-A & B & C \\ 
-\end{tabular} 
+\begin{center}
+\Huge Thank You \smiley{}
+\end{center}
 \end{frame}
 
-
-\section{Section no. 4}
-\subsection{blocs}
+\section{Fuzzy Private Set Intersection}
 \begin{frame}
-\frametitle{blocs}
-
-\begin{block}{title of the bloc}
-bloc text
-\end{block}
-
-\begin{exampleblock}{title of the bloc}
-bloc text
-\end{exampleblock}
-
-
-\begin{alertblock}{title of the bloc}
-bloc text
-\end{alertblock}
+\frametitle{something}
 \end{frame}
+
+\begin{frame}
+\frametitle{something}
+\end{frame}
+
 
 \section{Appendix}
 \begin{frame}
@@ -279,8 +275,151 @@ In the case when G is psuedorandom function this probability must be equal to
 where $\vartheta(\kappa)$ is negligible
 else we can build a distinguisher $\mathcal{D}$ that distinguishes output of PRF from Random function by calculating hamming weights of inputs.}
 \end{proof}
+
 \end{frame}
-\section{References}
+
+\begin{frame}
+\frametitle{The IKNP construction for extending OT with semi-honest receiver}
+Given a small number of oblivious transfers can we implement a large number of oblivious transfers ? \par \pause
+The \cite{IKNP} construction does that \smiley{}.\par \pause
+This protocol reduces reduces $OT_l^m$ to $OT_m^k$ which is ultimately reduced to $OT_k^k$ ($m >> k$). Overhead is few symmetric key operations.
+\end{frame}
+
+\begin{frame}
+\frametitle{The IKNP construction for extending OT with semi-honest receiver}
+\begin{itemize}
+\item \textbf{Input of $S$}: $m$ pairs ($\mathbf{x}_{j,0}, \mathbf{x}_{j,1}$) of $l$-bit strings, $1 \leq j \leq m$. \pause
+\item \textbf{Input of $R$}: $m$ selection bits of $\mathbf{r}$ = ($r_1,.....r_m$). \pause
+\item \textbf{Common Input}: a security parameter $k$.\pause
+\item \textbf{Oracle}: a random oracle $H : \left[m\right] \times \{0,1\}^k \rightarrow \{0,1\}^l$. \pause
+\item \textbf{Cryptographic Primitive}: An ideal $OT_m^k$ primitive.\pause
+\end{itemize}
+\begin{enumerate}
+\item $S$ initializes a random vector $\mathbf{s} \in \{0,1\}^k$ and $R$ random $m \times k$ bit matrix $T$ and $U$ such that $\mathbf{T}^i \oplus \mathbf{U}^i = \mathbf{r}$ for $i \in [k]$. \pause
+\item The parties invoke the $OT_m^k$ primitive, where $S$ acts as receiver with input $s_i$ and $R$ as sender with inputs ($\mathbf{T}^i, \mathbf{r} \oplus \mathbf{T}^i$), $1 \leq i \leq k$,
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{The IKNP construction for extending OT with semi-honest receiver}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item Let $Q$ denote the $m \times k$ matrix of values received by $S$. \pause
+
+\begin{remark}
+\begin{align}
+\mathbf{Q}^i = (s_i \cdot \mathbf{r}) \oplus \mathbf{T}^i \\
+\mathbf{Q}_j = (r_j \cdot \mathbf{s}) \oplus \mathbf{T}_j
+\end{align}
+\end{remark}\pause
+\item $S$ sends ($\mathbf{y}_{j,0}, \mathbf{y}_{j,1}$) where \pause
+\begin{align*}
+\mathbf{y}_{j,0} &= \mathbf{x}_{j,0} \oplus H(j,\mathbf{Q}_j) \\
+\mathbf{y}_{j,1} &= \mathbf{x}_{j,1} \oplus H(j,\mathbf{Q}_j \oplus \mathbf{s})
+\end{align*}
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{The IKNP construction for extending OT with semi-honest receiver}
+
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item For $1 \leq j \leq m$, $R$ outputs $\mathbf{z}_{j} = \mathbf{y}_{j,r_j} \oplus H(j, \mathbf{T}_{j})$\pause
+\end{enumerate}
+We can easily verify that $\mathbf{z}_{j} =\mathbf{x}_{j,r_j}$
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The KK13 construction}
+\begin{itemize}
+\item If we observe \cite{IKNP} construction each row(say $i^{th}$) of $T \oplus U$ is either all 0's or 1's depending on $r_i$. \pause
+\item Kolesnikov and Kumersan saw them as repetition code and came up with a similar protocol for extension of $1-out-of-2^l\ OT$ \pause
+\item Now instead of choice bit $r_i$ receiver has choice string $\mathbf{r_i}$ of length $l$.\pause And let $C$ be an error correcting code of codeword length $k$. \pause
+\item The receiver will prepare matrices $T$ and $U$ such that $\mathbf{T}_j \oplus \mathbf{U}_j = C(\mathbf{r_j})$.
+\item Equation 2 will now become :
+\begin{align}
+Q_j = [ C(\mathbf{r_j}) \cdot \mathbf{s} ] \oplus \mathbf{T}_j
+\end{align}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The KK13 construction}
+\begin{itemize}
+\item \textbf{Input of $S$}: $m$ tuples ($\mathbf{x_{j,0},... x_{j,n-1}}$) of $l$-bit strings, $1 \leq j \leq m$. \pause
+\item \textbf{Input of $R$}: $m$ selection integers of $\mathbf{r}$ = ($\mathbf{r}_1,.....\mathbf{r}_m$) such that $0 \leq \mathbf{r}_j \leq n-1$. \pause
+\item \textbf{Common Input}: a security parameter $k$ and Walsh Hadamard Codes $C_{WH}^k$.\pause
+\item \textbf{Oracle}: a random oracle $H : \left[m\right] \times \{0,1\}^k \rightarrow \{0,1\}^l$ . \pause
+\item \textbf{Cryptographic Primitive}: An ideal $OT_m^k$ primitive.\pause
+\end{itemize}
+\begin{enumerate}
+\item $S$ initializes a random vector $\mathbf{s} \in \{0,1\}^k$ and $R$ random $m \times k$ bit matrix $T$ and $U$ such that $\mathbf{T}_j \oplus \mathbf{U}_j = C(\mathbf{r_j})$. \pause
+\item The parties invoke the $OT_m^k$ primitive, where $S$ acts as receiver with input $s_i$ and $R$ as sender with inputs ($\mathbf{T}^i, \mathbf{U}^i$), $1 \leq i \leq k$,
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{The KK13 construction}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item Let $Q$ denote the $m \times k$ matrix of values received by $S$. \pause
+
+\begin{remark}
+\begin{align*}
+\mathbf{Q}_j = (C(\mathbf{r_j}) \cdot \mathbf{s}) \oplus \mathbf{T}_j
+\end{align*}
+\end{remark}\pause
+
+\item $S$ sends ($\mathbf{y}_{j,0},.... \mathbf{y}_{j,n-1} \ for \ j \in [m] \ and \ r \in [n-1] $) where \pause
+\begin{align*}
+\mathbf{y}_{j,r} &= \mathbf{x}_{j,r} \oplus H(j|| \mathbf{Q}_j \oplus (\mathbf{C(r)} \cdot \mathbf{s}) \\
+\end{align*}
+\item For $1 \leq j \leq m$, $R$ outputs $\mathbf{z}_{j} = \mathbf{y}_{j,\mathbf{r}_j} \oplus H(j, \mathbf{T}_{j})$\pause
+\item it is easy to verify that R can't learn any other value and is able to learn value corresponding to his choice integer only.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Proof of lemma 2}
+\begin{proof}\renewcommand{\qedsymbol}{}
+In the $m-RK-PRF$ game with the defined $PRF$, we can write adversary's(controlling R) view as : 
+
+\begin{equation}
+\mathlarger{(} C, \{\mathbf{T}_{0,j}\}_{j \in [m]}, \{H(p_i ||\mathbf{T}_{0,p_i} \oplus [(C(\mathbf{x}_{p_i} ) \oplus C(\mathbf{y}_{i})) \cdot \mathbf{s}]  )\}_{i \in [m]} \mathlarger{)}
+\end{equation}\pause
+Now, in the game adversary chooses $m$ strings $y_i$. So we have $m$ terms of the form $C(x_{p_i}) \oplus C(y_i)$ for $x_{p_i} \neq y_i$. \pause
+By our choice of $C$ each of these have hamming weight atleast $d$ with probability atleast $1-\frac{2^{-\epsilon}}{m}$.\\\pause
+Let $A_i$ be the event when $i^th$ such term has hamming weight less than $d$. Then :\pause
+\begin{align*}
+\Pr \left[ A_1^\complement \cap A_2^\complement..... \cap A_m^\complement \right] &= 1 - \Pr \left[ (A_1^\complement \cap A_2^\complement..... \cap A_m^\complement)^\complement \right] \\
+&= 1 - \Pr \left[  A_1 \cup A_2..... \cup A_m \right]
+\end{align*}
+
+
+\end{proof}
+\end{frame}
+
+\begin{frame}
+\begin{proof}[Proof Continued]
+By union bound
+
+\begin{align*}
+ \geq 1 - m \frac{2^{-\epsilon}}{m} = 1 - 2^{-\epsilon}.
+\end{align*}\pause
+So, by above calculation all such terms have hamming weight atleast $d$ with overwhelming probability($1 - 2^{-\epsilon}$).\\\pause
+Conditioning on this event apply $d-$ hamming correlation robust property of $H$ to conclude that $H$ outputs are indistinguishable from random. 
+\end{proof}
+\end{frame}
+
+
+\begin{center}
+\vspace*{0.5px}
+\huge{References}
+\end{center}\par
 \bibliography{talk}
 \bibliographystyle{alpha}
 
