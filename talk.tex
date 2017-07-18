@@ -8,12 +8,28 @@
 \usepackage{relsize}
 \usepackage{wasysym}
 \usepackage{amssymb}
+\usepackage{graphicx}
 
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle\hspace*{3em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
 
-\title{BaRK OPRF and Fuzzy PSI}
+
+
+\title{Batched Related Key Oblivious Psuedo Random Function}
 \author[Abhishek Kumar]{Abhishek Kumar\\{\small Supervised by: Dr. Bhavana Kanukurthi}}
 \date{\today} 
 \begin{document}
@@ -32,22 +48,25 @@
 \section{Introduction} 
 \begin{frame}
 \frametitle{Introduction} 
+\begin{center}
+\includegraphics[scale=0.34]{intro}\pause
+\end{center}
 \begin{itemize}
-\item In this talk we will talk about a protocol for oblivious evaluation of psuedorandom function(OPRF). \pause
-\item This mentioned protocol is efficient for evaluating a large batch of OPRF instances. \pause
-\item We will consider semi-honest setting.\pause
-\item The above protocol is due to \cite{KKRT} called Batched Related Key OPRF(BaRK-OPRF).\pause
-\item PSI uses Oblivious Transfers' Extension(OT-Extension) from \cite{KK} as building blocks.
+\item In this talk we will talk about a protocol for evaluating a large batch OPRF instances. \pause
+%\item This mentioned protocol is efficient for evaluating a large batch of OPRF instances. \pause
+\item We will consider semi-honest settings.\pause
+\item The above protocol is due to \cite{KKRT} called Batched Related Key OPRF(BaRK-OPRF).
+%\item PSI uses Oblivious Transfers' Extension(OT-Extension) from \cite{KK} as building blocks.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Motivation}
 \begin{itemize}
-\item This work significantly improves the state-of-the-art Private Set Intersecction(PSI) protocol of \cite{PSSZ}.\pause
-\item Among the problems of secure computation, PSI is most strongly motivated by practice. \pause
+\item This work significantly improves the state-of-the-art Private Set Intersection(PSI) protocol of \cite{PSSZ}.\pause
+\item Among the problems of secure computation, PSI is most strongly motivated by practice.\smiley{} \pause
 \item It is used for measuring Ad Conversion rate, Security incident information sharing, private contact discovery.\pause
-\item The \cite{IKNP} OT extension is one of the gems in the field of secure computation and used in implementations of Yao and GMW protocols.
+
 \end{itemize}
  
 \end{frame}
@@ -55,8 +74,7 @@
 \begin{frame}
 \frametitle{Related Work}
 \begin{itemize}
-\item OPRFs were introduced by \cite{FIPR} but they use expensive public key operations. Also they use number of OTs proportional to bit length of PRF input. \pause
-\item Just like standard OPRF, BaRK-OPRF efficiently implies keyword search functionality of \cite{FIPR}. \pause
+\item OPRFs were introduced by \cite{FIPR} but their protocol uses expensive public key operations. Also they use number of OTs proportional to bit length of PRF input. Thus not useful if we have to carry out large number of OPRF instances.\frownie \pause
 \item The protocol of \cite{CNS} constructs an OPRF from unique blind signature schemes.
 \end{itemize}
 \end{frame}
@@ -73,8 +91,8 @@
 \item We denote Matrices in capital say $M$.
 \item For matrix $M$ 
 	\begin{itemize}
-	\item $M_i$ means $i^th$ row of M
-	\item $M^j$ means $j^th$ coloumn of M.
+	\item $M_i$ means $i^{th}$ row of M
+	\item $M^j$ means $j^{th}$ coloumn of M.
 	\end{itemize}
 \item For vector $\mathbf{a}$ and bit $b$, $\mathbf{a} \cdot b$ means $\mathbf{a}$ if $b=1$ else $\mathbf{0}$.
 \item For vectors  $\mathbf{a}$ and bit $\mathbf{b}$, $\mathbf{a} \cdot \mathbf{b}$ means bitwise AND.
@@ -87,9 +105,9 @@
 \frametitle{Correlation Robustness}
 
 \begin{definition}[1]
-\textit{Let H be a hash function with input length n. Then H is a d-\textbf{Hamming correlation robust} if for any strings $z_1....z_m \in \{0,1\}^*$ and $a_1,....a_m,b_1,....b_m \in \{0,1\}^*$ with $\|b_i\|_H \geq d $, the following distribution, induced by random sampling of $s \longleftarrow \{0,1\}^n$, is psuedo-random :}
+\textit{Let H be a hash function. Then H is a d-\textbf{Hamming correlation robust} if for any strings $\mathbf{z_1}....\mathbf{z_m} \in \{0,1\}^*$ and $\mathbf{a_1},....\mathbf{a_m},\mathbf{b_1},....\mathbf{b_m} \in \{0,1\}^n$ with $\|\mathbf{b_i}\|_H \geq d $, the following distribution, induced by random sampling of $\mathbf{s} \longleftarrow \{0,1\}^n$, is psuedo-random :}
 \begin{equation*}
-H(z_1||a_1 \oplus [b_1 \cdot s]),.....,H(z_m||a_m \oplus [b_m \cdot s])
+H(\mathbf{z_1}||\mathbf{a_1} \oplus [\mathbf{b_1} \cdot \mathbf{s}]),.....,H(\mathbf{z_m}||\mathbf{a_m} \oplus [\mathbf{b_m} \cdot \mathbf{s}])
 \end{equation*}
 %$H(z_1||a_1 \oplus [b_1 \cdot s])..... H(z_m||a_m \oplus [b_m \cdot s])$`
 ``." denotes bitwise-AND
@@ -116,10 +134,12 @@ H(z_1||a_1 \oplus [b_1 \cdot s]),.....,H(z_m||a_m \oplus [b_m \cdot s])
 
 \begin{frame}
 \frametitle{High Level Idea}
+\begin{center}\includegraphics[scale=0.35]{idea}\end{center}
 \begin{itemize}
-\item We see 1-out-of-$\infty$ OT extension as OPRF. The intuition begind this is the fact that Sender has ability to  evaluate the function at any point but remains oblivious to Receiver's choice. Also Receiver can't evaluate function at any point as it doesn't have access to key.\pause
 
-\item However in the construction as we shall see, more information is leaked than required. Hence we will meet the definition of \textsf{relaxed OPRF} as defined in \cite{FIPR}.
+\item We see 1-out-of-$\infty$ OT as OPRF. The intuition begind this is the fact that Sender has ability to  evaluate the function at any point but remains oblivious to Receiver's choice. Also Receiver can't evaluate function at any other point as it doesn't have access to key.\pause
+
+\item However in the construction as we shall see, more information is leaked than required. Hence we will meet the definition\\ of \textsf{relaxed OPRF} as defined in \cite{FIPR}.
 
 \end{itemize}
 \end{frame}
@@ -139,9 +159,9 @@ H(z_1||a_1 \oplus [b_1 \cdot s]),.....,H(z_m||a_m \oplus [b_m \cdot s])
 \begin{frame}
 \frametitle{Security Game}
 \begin{enumerate}
-\item The adversary chooses a large no. of strings $x_1,.....x_n$ which it will query to $\widetilde{F}$.\pause
-\item Then it selects $m$ pairs $(p_1,y_1),.....(p_m,y_m)$. where $p_i \neq x_{j_i}$.\pause
-\item Challenger chooses keys $k^*, k_1, k_2, ....k_n$ which can be used as key to $F$.\pause
+\item The adversary chooses a large no. of strings $x_1,.....x_n$ which it will query to $\widetilde{F}$. $x_1,.....x_n \in \{0,1\}^*$.\pause
+\item Then it selects $m$ pairs $(p_1,y_1),.....(p_m,y_m)$, where $p_i \neq x_{j_i}$, $y_1,.....y_m \in \{0,1\}^*$\pause
+\item Challenger chooses $k^*, k_1, k_2, ....k_n$ such that each pair ($k^*,k_i$) can be used as key to $F$.\pause
 
 \end{enumerate}
 
@@ -176,8 +196,14 @@ Intuitively the $PRF$ is instantiated with $n$ related keys(sharing $k^*$ value 
 \end{frame}
 
 \section{Result}
+\begin{frame}
+\begin{itemize}
+\item Let $\mathbf{s}$ denote a random vector chosen by sender.\pause
+\item $\mathbf{q}_j$ is a vector known to sender. $j$ is used for indexing and known to both.\pause
+\item $r$ is the evaluation point known to receiver only.\pause
+\end{itemize}
 \begin{lemma}[2]
-Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correlation\ robust$ hash function. Let us define following relaxed PRF for $C \in_{randomly} \mathcal{C}:$
+Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correlation\ robust$ hash function. Let us define following relaxed PRF for $C \leftarrow_{randomly} \mathcal{C}:$
 \begin{align*}
 \mathlarger{\mathlarger{F(}} \mathlarger{(}  (C,s),(q_j,j)\mathlarger{)}, r \mathlarger{\mathlarger{)}} = \mathlarger{H(} j||q_j \oplus [C(r)\cdot s] \mathlarger{)}
 \\
@@ -185,16 +211,18 @@ Let $\mathcal{C}$ be a $(d,\epsilon+\log{m})-PRC$ let  $H$ be $d-hamming\ correl
 \end{align*}
 Then $F$ has $\mathbf{m-RK-PRF}$ security .
 \end{lemma}
-\subsection{Protocol}
-
+\end{frame}
 \begin{frame}
 \frametitle{Ideal Functionality we want to achieve :}
+\begin{center}
+\includegraphics[scale=0.35]{ideal}
+\end{center}
 \begin{itemize}
-\item Thre are two parties, psuedorandom function $F$ and corresponding $\widetilde{F}$ a number $m$ of instances.\pause
+\item There are two parties, psuedorandom function $F$ and corresponding $\widetilde{F}$ a number $m$ of instances.\pause
 \item On input ($r_1,r_2,......r_m$) from receiver :
 	\begin{itemize}
 	\item Choose random components for seeds to $PRF$ : $k^*, k_1, k_2, ......k_m$ and give it to sender.\pause
-	\item Give $\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_1, \mathlarger{)}, r_1 \mathlarger{\mathlarger{)}},.....\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_m \mathlarger{)}, r_m \mathlarger{\mathlarger{)}}$ to receiver.\pause
+	\item Give $\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_1, \mathlarger{)}, r_1 \mathlarger{\mathlarger{)}},.....\mathlarger{\mathlarger{\widetilde{F}(}} \mathlarger{(}  k^*,k_m \mathlarger{)}, r_m \mathlarger{\mathlarger{)}}$ to receiver.
 \end{itemize}	 
 \end{itemize} 
 \end{frame}
@@ -231,14 +259,14 @@ Then $F$ has $\mathbf{m-RK-PRF}$ security .
 \begin{itemize}
 \item S acts as receiver with input $\{s_i\}, i \in [k]$\pause
 \item R acts as sender with input $\{\mathbf{T}_0^i,\mathbf{T}_1^i\}, i \in [k]$\pause
-\item From the output S receives S forms $m\times k$ matrix $Q$ such that 
+\item From the output S receives, S forms $m\times k$ matrix $Q$ such that 
 \begin{align*}
 \mathbf{Q}^i &= \mathbf{T}_{s_i}^i, \ for\  i \in [k] \\
 \mathbf{Q}_j &= \mathbf{T}_{0,j} \oplus (C(\mathbf{r}_j) \cdot \mathbf{s}) \ for \ j \in [m]
 \end{align*}
 \end{itemize}\pause
-\item For $for \ j \in [m]$ S outputs $PRF$ seed $((C,\mathbf{s}),(j,\mathbf{Q}_j))$.\pause
-\item For $for \ j \in [m]$ R outputs relaxed-$PRF$ output $(C,j,\mathbf{T}_{0,j})$.\pause
+\item For $j \in [m]$ S outputs $PRF$ seed $((C,\mathbf{s}),(j,\mathbf{Q}_j))$.\pause
+\item For $j \in [m]$ R outputs relaxed-$PRF$ output $(C,j,\mathbf{T}_{0,j})$.\pause
 \end{enumerate}
 From relaxed-$PRF$'s output, R can calculate PRF's output.
 \end{frame}
@@ -250,28 +278,27 @@ From relaxed-$PRF$'s output, R can calculate PRF's output.
 \end{center}
 \end{frame}
 
-\section{Fuzzy Private Set Intersection}
-\begin{frame}
-\frametitle{something}
-\end{frame}
-
-\begin{frame}
-\frametitle{something}
-\end{frame}
-
 
 \section{Appendix}
 \begin{frame}
+\begin{center}
+\Huge Appendix
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}
 \frametitle{Proof of Lemma 1}
 \begin{proof}
-\textit{If we define $\mathcal{C}$ from random functions G instead of psuedorandom we get
+\textit{If we define $\mathcal{C}$ from random functions G instead of psuedorandom we get\pause
 \begin{equation*}
 \Pr_{C\leftarrow \mathcal{C}} \left[ \|C(x) \oplus C(x^\prime)\|_H < d \right] = 2^{-n}\sum_{i=0}^{d-1} {n \choose i}
-\end{equation*}
+\end{equation*}\pause
 In the case when G is psuedorandom function this probability must be equal to
 \begin{equation*}
 2^{-n}\sum_{i=0}^{d-1} {n \choose i} + \vartheta(\kappa)
-\end{equation*}
+\end{equation*}\pause
 where $\vartheta(\kappa)$ is negligible
 else we can build a distinguisher $\mathcal{D}$ that distinguishes output of PRF from Random function by calculating hamming weights of inputs.}
 \end{proof}
@@ -282,7 +309,7 @@ else we can build a distinguisher $\mathcal{D}$ that distinguishes output of PRF
 \frametitle{The IKNP construction for extending OT with semi-honest receiver}
 Given a small number of oblivious transfers can we implement a large number of oblivious transfers ? \par \pause
 The \cite{IKNP} construction does that \smiley{}.\par \pause
-This protocol reduces reduces $OT_l^m$ to $OT_m^k$ which is ultimately reduced to $OT_k^k$ ($m >> k$). Overhead is few symmetric key operations.
+This protocol reduces reduces $OT_l^m$ to $OT_m^k$ which is ultimately reduced to $OT_k^k$ ($m \gg k$). Overhead is few symmetric key operations.
 \end{frame}
 
 \begin{frame}
@@ -290,14 +317,15 @@ This protocol reduces reduces $OT_l^m$ to $OT_m^k$ which is ultimately reduced t
 \begin{itemize}
 \item \textbf{Input of $S$}: $m$ pairs ($\mathbf{x}_{j,0}, \mathbf{x}_{j,1}$) of $l$-bit strings, $1 \leq j \leq m$. \pause
 \item \textbf{Input of $R$}: $m$ selection bits of $\mathbf{r}$ = ($r_1,.....r_m$). \pause
-\item \textbf{Common Input}: a security parameter $k$.\pause
-\item \textbf{Oracle}: a random oracle $H : \left[m\right] \times \{0,1\}^k \rightarrow \{0,1\}^l$. \pause
+\item \textbf{Common Input}: A security parameter $k$.\pause
+\item \textbf{Oracle}: A random oracle $H : \left[m\right] \times \{0,1\}^k \rightarrow \{0,1\}^l$. \pause
 \item \textbf{Cryptographic Primitive}: An ideal $OT_m^k$ primitive.\pause
 \end{itemize}
 \begin{enumerate}
 \item $S$ initializes a random vector $\mathbf{s} \in \{0,1\}^k$ and $R$ random $m \times k$ bit matrix $T$ and $U$ such that $\mathbf{T}^i \oplus \mathbf{U}^i = \mathbf{r}$ for $i \in [k]$. \pause
-\item The parties invoke the $OT_m^k$ primitive, where $S$ acts as receiver with input $s_i$ and $R$ as sender with inputs ($\mathbf{T}^i, \mathbf{r} \oplus \mathbf{T}^i$), $1 \leq i \leq k$,
+\item The parties invoke the $OT_m^k$ primitive, where $S$ acts as receiver with input $s_i$ and $R$ as sender with inputs ($\mathbf{T}^i, \mathbf{r} \oplus \mathbf{T}^i$), $1 \leq i \leq k$.
 \end{enumerate}
+
 \end{frame}
 
 \begin{frame}
@@ -341,7 +369,7 @@ We can easily verify that $\mathbf{z}_{j} =\mathbf{x}_{j,r_j}$
 \item The receiver will prepare matrices $T$ and $U$ such that $\mathbf{T}_j \oplus \mathbf{U}_j = C(\mathbf{r_j})$.
 \item Equation 2 will now become :
 \begin{align}
-Q_j = [ C(\mathbf{r_j}) \cdot \mathbf{s} ] \oplus \mathbf{T}_j
+\mathbf{Q}_j = [ C(\mathbf{r_j}) \cdot \mathbf{s} ] \oplus \mathbf{T}_j
 \end{align}
 
 \end{itemize}
@@ -350,7 +378,7 @@ Q_j = [ C(\mathbf{r_j}) \cdot \mathbf{s} ] \oplus \mathbf{T}_j
 \begin{frame}
 \frametitle{The KK13 construction}
 \begin{itemize}
-\item \textbf{Input of $S$}: $m$ tuples ($\mathbf{x_{j,0},... x_{j,n-1}}$) of $l$-bit strings, $1 \leq j \leq m$. \pause
+\item \textbf{Input of $S$}: $m$ tuples ($\mathbf{x}_{j,0},... \mathbf{x}_{j,n-1}$) of $l$-bit strings, $1 \leq j \leq m$. \pause
 \item \textbf{Input of $R$}: $m$ selection integers of $\mathbf{r}$ = ($\mathbf{r}_1,.....\mathbf{r}_m$) such that $0 \leq \mathbf{r}_j \leq n-1$. \pause
 \item \textbf{Common Input}: a security parameter $k$ and Walsh Hadamard Codes $C_{WH}^k$.\pause
 \item \textbf{Oracle}: a random oracle $H : \left[m\right] \times \{0,1\}^k \rightarrow \{0,1\}^l$ . \pause
@@ -379,7 +407,7 @@ Q_j = [ C(\mathbf{r_j}) \cdot \mathbf{s} ] \oplus \mathbf{T}_j
 \mathbf{y}_{j,r} &= \mathbf{x}_{j,r} \oplus H(j|| \mathbf{Q}_j \oplus (\mathbf{C(r)} \cdot \mathbf{s}) \\
 \end{align*}
 \item For $1 \leq j \leq m$, $R$ outputs $\mathbf{z}_{j} = \mathbf{y}_{j,\mathbf{r}_j} \oplus H(j, \mathbf{T}_{j})$\pause
-\item it is easy to verify that R can't learn any other value and is able to learn value corresponding to his choice integer only.
+\item It is easy to verify that R can't learn any other value and \\is able to learn value corresponding to his choice integer only.
 \end{enumerate}
 \end{frame}
 
