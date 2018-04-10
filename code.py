@@ -3,16 +3,27 @@ import pickle
 import scipy.io
 import scipy.sparse
 
-mat = scipy.io.loadmat('nips12raw_str602.mat')
-X = mat['counts']
-X =X.T
+X = scipy.io.loadmat('matlab/train.data')
+# X = mat['counts']
+# X =X.T
 # X = X[:5]
 
 
 # X = pickle.load(open('featureVector', 'rb'))
 # X = pickle.load(open('miniFeat', 'rb'))
 
+print(X.shape)
+print(type(X))
+print(X[0].shape)
+print(X[0])
+X = X.astype(int)
+print(type(X[0,0]))
+# np.savetxt("foo.csv", X, delimiter="\t")
+# f = open("foo.csv", 'w')
+# np.savetxt(f, X, fmt='%i', delimiter="\t")
 
+
+exit()
 
 # X = np.array(([[1,2,3],[0,1,0],[5,6,7],[8,9,0],[0,0,0]]))
 
