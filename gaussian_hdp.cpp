@@ -10,12 +10,13 @@ using namespace std;
 
 
 
-#define N_DATASETS 8
+#define N_DATASETS 5
 #define EPOCHS 10
 #define VOCAB 53975
 #define LAMBDA_L 10000
 #define LAMBDA_G 10000
-
+#define LINES 1005
+#define TOTAL_PTS 5
 
 
 ll ***data;
@@ -25,8 +26,8 @@ vector<ll> local_to_global[N_DATASETS];
 ll n_global_clusters;
 ll n_local_clusters[N_DATASETS];
 ll n_points[N_DATASETS];
-ll* Z[N_DATASETS]
-vector<ll>  V[N_DATASETS]
+ll* Z[N_DATASETS];
+vector<ll> V[N_DATASETS];
 
 
 
@@ -49,6 +50,22 @@ ll compute_distance(ll dataset_id, ll docid, ll global_clusterid){
 		d += temp*temp;
 		if(d > LLONG_MAX - 1000){
 			cout << "d may exceed the limit .............................................. " << docid << " " <<  clusterid << "\n";
+			exit(1);
+		}
+	}
+	return d;
+}
+
+ll compute_distance_custom(ll* a1, ll* a2, ll size){
+	ll d =0;
+	ll temp;
+
+	for (ll i = 0; i < size; ++i)
+	{
+		temp = (a1[i]- a2[i]);
+		d += temp*temp;
+		if(d > LLONG_MAX - 1000){
+			cout << "d may exceed the limit2 .............................................. ";
 			exit(1);
 		}
 	}
@@ -79,50 +96,73 @@ void copyarray(ll* a1 , ll* a2, ll size){
 
 
 void readinput(){
-	data = (ll**)malloc(DOCS*sizeof(ll*));
-	for (ll i = 0; i < DOCS; ++i)
+
+	// Set number of points
+
+	for (ll i = 0; i < N_DATASETS; ++i)
 	{
-		data[i] = (ll*)malloc(VOCAB*sizeof(ll));
-		for (ll j = 0; j < VOCAB; ++j)
+		n_points[i]=1;
+	}
+
+	ll* mu_1 = (ll*)malloc(VOCAB*sizeof(ll));
+	for (ll i = 0; i < VOCAB; ++i)
+	{
+		mu_1[i]=0;
+	}
+	data = (ll***)malloc(N_DATASETS*sizeof(ll**));
+	for (ll i = 0; i < N_DATASETS; ++i)
+	{
+		data[i] = (ll**)malloc(n_points[i]*sizeof(ll*));
+		for (ll j = 0; j < n_points[i]; ++j)
 		{
-			data[i][j]=0;
+			data[i][j] = (ll*)malloc(VOCAB*sizeof(ll));
+			for (ll idx = 0; idx < VOCAB; ++idx)
+			{
+				data[i][j][idx]=0;
+			}
 		}
 	}
 
-	ll docid, wordid, count;
+
+	// Read data
+	ll docid, wordid, count, dataset_id=0;
+
 	for (ll i = 0; i < LINES; ++i)
 	{
-		cin >> docid; cin >> wordid; cin >> count;
-		data[docid-1][wordid-1] = count;
+		cin >> docid;
+		if(docid == -1){
+			dataset_id++;
+			continue;
+		}
+		cin >> wordid; cin >> count;
+		data[dataset_id][docid][wordid] = count;
 	}
 
-	clusterid = (ll*)malloc(DOCS*sizeof(ll));
-	for (ll i = 0; i < DOCS; ++i)
+	for (ll i = 0; i < N_DATASETS; ++i)
 	{
-		clusterid[i]=0;
+		for (ll j = 0; j < n_points[i]; ++j)
+		{
+			for (ll idx = 0; idx < count; ++idx)
+			{
+				mu_1[idx] += data[i][j][idx];
+			}
+		}
 	}
-
-	// Initialize
-	ll* _mean = (ll*)malloc(VOCAB*sizeof(ll));
-	for (ll i = 0; i < VOCAB; ++i)
+	for (ll idx = 0; idx < count; ++idx)
 	{
-		_mean[i] = data[0][i];
+		mu_1[idx] = (mu_1[idx]*1.0)/TOTAL_PTS;
 	}
-	means.pb(_mean);
-	n_clusters=1;
-
-	//Set \mu_1
-	/////////////////////////////////////////////////////
+	global_means.pb(mu_1);
 	n_global_clusters=1;
 	for (int i = 0; i < N_DATASETS; ++i)
 	{
 		n_local_clusters[i]=1;
-		V[i].pb(0)
+		V[i].pb(0);
 	}
 	for (ll i = 0; i < N_DATASETS; ++i)
 	{
-		Z[i] = (ll*)malloc(n_points[i]*sizeof(ll))
-		for (ll j=0; j < n_points; ++j)
+		Z[i] = (ll*)malloc(n_points[i]*sizeof(ll));
+		for (ll j=0; j < n_points[i]; ++j)
 		{
 			Z[i][j]=0;
 		}
@@ -154,7 +194,7 @@ void getClusters(){
 				}
 
 			}
-			p_min = findmin(temp, n_global_clusters);
+			ll p_min = findmin(temp, n_global_clusters);
 			if(temp[p_min] > LAMBDA_L + LAMBDA_G){
 				n_local_clusters[i]++;
 				Z[i][j]=n_local_clusters[i]-1;
@@ -191,7 +231,7 @@ void getClusters(){
 
 
 void updateLocalClusters(){
-	ll* djcp = (ll*) malloc(n_global_clusters*sizeof(ll))
+	ll* djcp = (ll*) malloc(n_global_clusters*sizeof(ll));
 	ll n=0;
 	for (ll i = 0; i < N_DATASETS; ++i)
 	{
@@ -213,7 +253,7 @@ void updateLocalClusters(){
 					}
 					for (ll p = 0; p < n_global_clusters; ++p)
 					{
-						djcp[p] += compute_distance(i, j, p)
+						djcp[p] += compute_distance(i, j, p);
 					}
 				}
 			}
@@ -251,10 +291,10 @@ void updateLocalClusters(){
 void updateGlobalClusters(){
 	for (ll p = 0; p < n_global_clusters; ++p)
 	{	
-		ll n=0
+		ll n=0;
 		for (ll i = 0; i < N_DATASETS; ++i)
 		{
-			for (ll j = 0; j < count; ++j)
+			for (ll j = 0; j < n_points[i]; ++j)
 			{
 				if(V[j][Z[i][j]] == p){
 					n++;
@@ -276,15 +316,15 @@ void updateGlobalClusters(){
 int main(){
 	readinput();
 
-	for (int i = 0; i < EPOCHS; ++i)
-	{
-		cout << "epoch = " << i << endl;
-		getClusters();
-		updateLocalClusters();
-		updateGlobalClusters();
+	// for (int i = 0; i < EPOCHS; ++i)
+	// {
+	// 	cout << "epoch = " << i << endl;
+	// 	getClusters();
+	// 	updateLocalClusters();
+	// 	updateGlobalClusters();
 		
-	}
-	cout << "#Clusters " << n_clusters << "\n";
+	// }
+	// cout << "#Clusters " << n_clusters << "\n";
 
 	// for(ll i=0; i< DOCS; i++){
 	// 	cout << clusterid[i] << endl;
